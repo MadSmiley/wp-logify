@@ -68,7 +68,7 @@ class WP_Logify {
         $table_name = self::get_table_name();
         $charset_collate = $wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
+        $sql = "CREATE TABLE {$table_name} (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id bigint(20) UNSIGNED DEFAULT NULL,
             action varchar(255) NOT NULL,

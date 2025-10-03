@@ -88,7 +88,7 @@ final class WP_Logify_Bootstrap {
         WP_Logify::schedule_cleanup_cron();
 
         // Log plugin activation
-        wp_logify_log('plugin_activated', null, [
+        wp_logify_log('plugin_activated', 'plugin', null, [
             'plugin' => 'WP Logify',
             'version' => WP_LOGIFY_VERSION
         ]);
@@ -101,7 +101,7 @@ final class WP_Logify_Bootstrap {
         WP_Logify::unschedule_cleanup_cron();
 
         // Log plugin deactivation
-        wp_logify_log('plugin_deactivated', null, [
+        wp_logify_log('plugin_deactivated', 'plugin', null, [
             'plugin' => 'WP Logify',
             'version' => WP_LOGIFY_VERSION
         ]);

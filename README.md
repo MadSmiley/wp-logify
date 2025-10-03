@@ -194,7 +194,7 @@ Table: `{prefix}_wp_logify`
 
 ```php
 add_action('wp_login', function($user_login, $user) {
-    wp_logify_log('user_login', $user->ID, [
+    wp_logify_log('user_login', 'user', $user->ID, [
         'username' => $user_login,
         'ip' => $_SERVER['REMOTE_ADDR']
     ]);
@@ -210,7 +210,7 @@ add_action('wp_logout', function() {
 ```php
 add_action('save_post', function($post_id, $post, $update) {
     if ($update) {
-        wp_logify_log('post_updated', $post_id, [
+        wp_logify_log('post_updated', 'post', $post_id, [
             'post_type' => $post->post_type,
             'post_status' => $post->post_status,
             'post_title' => $post->post_title
@@ -224,7 +224,7 @@ add_action('save_post', function($post_id, $post, $update) {
 ```php
 add_action('woocommerce_new_order', function($order_id) {
     $order = wc_get_order($order_id);
-    wp_logify_log('order_created', $order_id, [
+    wp_logify_log('order_created', 'order', $order_id, [
         'total' => $order->get_total(),
         'currency' => $order->get_currency(),
         'payment_method' => $order->get_payment_method()
@@ -236,7 +236,7 @@ add_action('woocommerce_new_order', function($order_id) {
 
 ```php
 add_action('wp_login_failed', function($username) {
-    wp_logify_log('login_failed', null, [
+    wp_logify_log('login_failed', null, null, [
         'username' => $username,
         'ip' => $_SERVER['REMOTE_ADDR'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT']
