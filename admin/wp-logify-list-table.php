@@ -41,12 +41,13 @@ class WP_Logify_List_Table extends WP_List_Table {
      */
     public function get_columns() {
         return [
-            'cb'         => '<input type="checkbox" />',
-            'user'       => __('User', 'wp-logify'),
-            'action'     => __('Action', 'wp-logify'),
-            'object_id'  => __('Object ID', 'wp-logify'),
-            'meta'       => __('Meta', 'wp-logify'),
-            'created_at' => __('Date', 'wp-logify')
+            'cb'          => '<input type="checkbox" />',
+            'user'        => __('User', 'wp-logify'),
+            'action'      => __('Action', 'wp-logify'),
+            'object_type' => __('Object Type', 'wp-logify'),
+            'object_id'   => __('Object ID', 'wp-logify'),
+            'meta'        => __('Meta', 'wp-logify'),
+            'created_at'  => __('Date', 'wp-logify')
         ];
     }
 
@@ -57,10 +58,11 @@ class WP_Logify_List_Table extends WP_List_Table {
      */
     public function get_sortable_columns() {
         return [
-            'user'       => ['user_id', false],
-            'action'     => ['action', false],
-            'object_id'  => ['object_id', false],
-            'created_at' => ['created_at', true] // true = already sorted
+            'user'        => ['user_id', false],
+            'action'      => ['action', false],
+            'object_type' => ['object_type', false],
+            'object_id'   => ['object_id', false],
+            'created_at'  => ['created_at', true] // true = already sorted
         ];
     }
 
@@ -122,6 +124,20 @@ class WP_Logify_List_Table extends WP_List_Table {
      */
     public function column_action($item) {
         return '<code>' . esc_html($item->action) . '</code>';
+    }
+
+    /**
+     * Column object_type
+     *
+     * @param object $item Log item
+     * @return string
+     */
+    public function column_object_type($item) {
+        if (!$item->object_type) {
+            return '—';
+        }
+
+        return '<code>' . esc_html($item->object_type) . '</code>';
     }
 
     /**
@@ -222,7 +238,7 @@ class WP_Logify_List_Table extends WP_List_Table {
      *
      * @return array
      */
-    protected function get_views() {
+    public function get_views() {
         $current_action = isset($_GET['filter_action']) ? sanitize_text_field($_GET['filter_action']) : '';
 
         $views = [];

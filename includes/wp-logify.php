@@ -72,12 +72,14 @@ class WP_Logify {
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id bigint(20) UNSIGNED DEFAULT NULL,
             action varchar(255) NOT NULL,
+            object_type varchar(100) DEFAULT NULL,
             object_id bigint(20) UNSIGNED DEFAULT NULL,
             meta longtext DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
             KEY user_id (user_id),
             KEY action (action),
+            KEY object_type (object_type),
             KEY created_at (created_at)
         ) {$charset_collate};";
 
@@ -92,11 +94,12 @@ class WP_Logify {
      * Log an action to the database
      *
      * @param string $action The action being logged
+     * @param string|null $object_type Optional object type (post, user, order, etc.)
      * @param int|null $object_id Optional object ID
      * @param array $meta Optional metadata
      * @return int|false Log entry ID on success, false on failure
      */
-    public static function log($action, $object_id = null, $meta = []) {
+    public static function log($action, $object_type = null, $object_id = null, $meta = []) {
         global $wpdb;
 
         // Get current user ID (0 if not logged in)
@@ -106,16 +109,17 @@ class WP_Logify {
         $data = [
             'user_id' => $user_id ?: null,
             'action' => sanitize_text_field($action),
+            'object_type' => $object_type ? sanitize_text_field($object_type) : null,
             'object_id' => $object_id ? absint($object_id) : null,
             'meta' => !empty($meta) ? wp_json_encode($meta) : null,
             'created_at' => current_time('mysql')
         ];
 
         // Format data types
-        $format = ['%d', '%s', '%d', '%s', '%s'];
+        $format = ['%d', '%s', '%s', '%d', '%s', '%s'];
 
         // Allow filtering before inserting
-        $data = apply_filters('wp_logify_before_log', $data, $action, $object_id, $meta);
+        $data = apply_filters('wp_logify_before_log', $data, $action, $object_type, $object_id, $meta);
 
         // Insert into database
         $result = $wpdb->insert(
@@ -134,7 +138,7 @@ class WP_Logify {
         do_action('wp_logify_after_log', $log_id, $data);
 
         // Fire specific action hook
-        do_action('wp_logify_log', $action, $object_id, $meta, $log_id);
+        do_action('wp_logify_log', $action, $object_type, $object_id, $meta, $log_id);
 
         return $log_id;
     }
@@ -151,6 +155,7 @@ class WP_Logify {
         $defaults = [
             'user_id' => null,
             'action' => null,
+            'object_type' => null,
             'object_id' => null,
             'date_from' => null,
             'date_to' => null,
@@ -177,6 +182,11 @@ class WP_Logify {
             $where_values[] = sanitize_text_field($args['action']);
         }
 
+        if ($args['object_type']) {
+            $where[] = 'object_type = %s';
+            $where_values[] = sanitize_text_field($args['object_type']);
+        }
+
         if ($args['object_id']) {
             $where[] = 'object_id = %d';
             $where_values[] = absint($args['object_id']);
@@ -195,7 +205,7 @@ class WP_Logify {
         $where_clause = implode(' AND ', $where);
 
         // Build ORDER BY clause
-        $allowed_orderby = ['id', 'user_id', 'action', 'object_id', 'created_at'];
+        $allowed_orderby = ['id', 'user_id', 'action', 'object_type', 'object_id', 'created_at'];
         $orderby = in_array($args['orderby'], $allowed_orderby) ? $args['orderby'] : 'created_at';
         $order = strtoupper($args['order']) === 'ASC' ? 'ASC' : 'DESC';
 
@@ -236,6 +246,11 @@ class WP_Logify {
         if (!empty($args['action'])) {
             $where[] = 'action = %s';
             $where_values[] = sanitize_text_field($args['action']);
+        }
+
+        if (!empty($args['object_type'])) {
+            $where[] = 'object_type = %s';
+            $where_values[] = sanitize_text_field($args['object_type']);
         }
 
         if (!empty($args['object_id'])) {

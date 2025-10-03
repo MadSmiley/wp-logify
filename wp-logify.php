@@ -128,12 +128,13 @@ final class WP_Logify_Bootstrap {
  * Utility function to log an action
  *
  * @param string $action The action being logged
+ * @param string|null $object_type Optional object type (post, user, order, etc.)
  * @param int|null $object_id Optional object ID related to the action
  * @param array $meta Optional metadata array
  * @return int|false Log entry ID on success, false on failure
  */
-function wp_logify_log($action, $object_id = null, $meta = []) {
-    return WP_Logify::log($action, $object_id, $meta);
+function wp_logify_log($action, $object_type = null, $object_id = null, $meta = []) {
+    return WP_Logify::log($action, $object_type, $object_id, $meta);
 }
 
 // Initialize the plugin

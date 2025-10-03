@@ -76,11 +76,15 @@
 }
 
 .wp-list-table .column-user {
-    width: 15%;
+    width: 12%;
 }
 
 .wp-list-table .column-action {
-    width: 20%;
+    width: 18%;
+}
+
+.wp-list-table .column-object_type {
+    width: 12%;
 }
 
 .wp-list-table .column-object_id {
@@ -88,7 +92,7 @@
 }
 
 .wp-list-table .column-meta {
-    width: 35%;
+    width: 30%;
 }
 
 .wp-list-table .column-created_at {

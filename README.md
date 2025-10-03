@@ -36,11 +36,11 @@ Use the utility function anywhere in your code:
 // Simple log
 wp_logify_log('user_login');
 
-// Log with object ID
-wp_logify_log('post_updated', 123);
+// Log with object type and ID
+wp_logify_log('post_updated', 'post', 123);
 
 // Log with metadata
-wp_logify_log('payment_received', $order_id, [
+wp_logify_log('payment_received', 'order', $order_id, [
     'amount' => 99.99,
     'currency' => 'USD',
     'gateway' => 'stripe'
@@ -51,7 +51,7 @@ wp_logify_log('payment_received', $order_id, [
 
 ```php
 // Log complex actions
-wp_logify_log('api_request', null, [
+wp_logify_log('api_request', null, null, [
     'endpoint' => '/api/v1/users',
     'method' => 'POST',
     'response_code' => 200,
@@ -59,7 +59,7 @@ wp_logify_log('api_request', null, [
 ]);
 
 // Track form submissions
-wp_logify_log('contact_form_submitted', null, [
+wp_logify_log('contact_form_submitted', 'form', null, [
     'form_id' => 'contact-us',
     'fields' => ['name', 'email', 'message'],
     'ip_address' => $_SERVER['REMOTE_ADDR']
@@ -77,12 +77,13 @@ The `user_id` is automatically captured from the current logged-in user:
 ### Core Function
 
 ```php
-wp_logify_log( string $action, int|null $object_id = null, array $meta = [] )
+wp_logify_log( string $action, string|null $object_type = null, int|null $object_id = null, array $meta = [] )
 ```
 
 **Parameters:**
 - `$action` (string, required) - The action being logged
-- `$object_id` (int, optional) - Related object ID (post, user, order, etc.)
+- `$object_type` (string, optional) - Type of object (post, user, order, form, etc.)
+- `$object_id` (int, optional) - Related object ID
 - `$meta` (array, optional) - Associative array of additional data
 
 **Returns:** `int|false` - Log entry ID on success, false on failure
@@ -110,15 +111,16 @@ WP_Logify::get_distinct_actions();
 
 ```php
 $args = [
-    'user_id'   => 1,              // Filter by user ID
-    'action'    => 'user_login',   // Filter by action
-    'object_id' => 123,            // Filter by object ID
-    'date_from' => '2024-01-01',   // Filter by start date
-    'date_to'   => '2024-12-31',   // Filter by end date
-    'limit'     => 20,             // Results per page
-    'offset'    => 0,              // Pagination offset
-    'orderby'   => 'created_at',   // Order by column
-    'order'     => 'DESC'          // ASC or DESC
+    'user_id'     => 1,              // Filter by user ID
+    'action'      => 'user_login',   // Filter by action
+    'object_type' => 'post',         // Filter by object type
+    'object_id'   => 123,            // Filter by object ID
+    'date_from'   => '2024-01-01',   // Filter by start date
+    'date_to'     => '2024-12-31',   // Filter by end date
+    'limit'       => 20,             // Results per page
+    'offset'      => 0,              // Pagination offset
+    'orderby'     => 'created_at',   // Order by column
+    'order'       => 'DESC'          // ASC or DESC
 ];
 
 $logs = WP_Logify::get_logs($args);
@@ -132,15 +134,15 @@ $logs = WP_Logify::get_logs($args);
 Fires after a log entry is created.
 
 ```php
-do_action( 'wp_logify_log', string $action, int|null $object_id, array $meta, int $log_id );
+do_action( 'wp_logify_log', string $action, string|null $object_type, int|null $object_id, array $meta, int $log_id );
 
 // Example usage
-add_action('wp_logify_log', function($action, $object_id, $meta, $log_id) {
+add_action('wp_logify_log', function($action, $object_type, $object_id, $meta, $log_id) {
     if ($action === 'critical_error') {
         // Send notification to admin
         wp_mail(get_option('admin_email'), 'Critical Error', 'A critical error was logged.');
     }
-}, 10, 4);
+}, 10, 5);
 ```
 
 **`wp_logify_after_log`**
@@ -156,10 +158,10 @@ do_action( 'wp_logify_after_log', int $log_id, array $data );
 Filter log data before insertion.
 
 ```php
-apply_filters( 'wp_logify_before_log', array $data, string $action, int|null $object_id, array $meta );
+apply_filters( 'wp_logify_before_log', array $data, string $action, string|null $object_type, int|null $object_id, array $meta );
 
 // Example usage
-add_filter('wp_logify_before_log', function($data, $action, $object_id, $meta) {
+add_filter('wp_logify_before_log', function($data, $action, $object_type, $object_id, $meta) {
     // Add IP address to all logs
     if (is_array($data['meta'])) {
         $meta_decoded = json_decode($data['meta'], true);
@@ -167,23 +169,24 @@ add_filter('wp_logify_before_log', function($data, $action, $object_id, $meta) {
         $data['meta'] = wp_json_encode($meta_decoded);
     }
     return $data;
-}, 10, 4);
+}, 10, 5);
 ```
 
 ## Database Schema
 
 Table: `{prefix}_wp_logify`
 
-| Column      | Type                | Description                           |
-|-------------|---------------------|---------------------------------------|
-| `id`        | bigint(20) UNSIGNED | Primary key, auto-increment           |
-| `user_id`   | bigint(20) UNSIGNED | WordPress user ID (NULL for guests)   |
-| `action`    | varchar(255)        | Action identifier                     |
-| `object_id` | bigint(20) UNSIGNED | Related object ID (NULL if not used)  |
-| `meta`      | longtext            | JSON-encoded metadata                 |
-| `created_at`| datetime            | Timestamp of log entry                |
+| Column        | Type                | Description                           |
+|---------------|---------------------|---------------------------------------|
+| `id`          | bigint(20) UNSIGNED | Primary key, auto-increment           |
+| `user_id`     | bigint(20) UNSIGNED | WordPress user ID (NULL for guests)   |
+| `action`      | varchar(255)        | Action identifier                     |
+| `object_type` | varchar(100)        | Object type (NULL if not used)        |
+| `object_id`   | bigint(20) UNSIGNED | Related object ID (NULL if not used)  |
+| `meta`        | longtext            | JSON-encoded metadata                 |
+| `created_at`  | datetime            | Timestamp of log entry                |
 
-**Indexes:** `user_id`, `action`, `created_at`
+**Indexes:** `user_id`, `action`, `object_type`, `created_at`
 
 ## Common Use Cases
 
