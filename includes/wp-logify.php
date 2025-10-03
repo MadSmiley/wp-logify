@@ -159,6 +159,7 @@ class WP_Logify {
             'object_id' => null,
             'date_from' => null,
             'date_to' => null,
+            'search' => null,
             'limit' => 20,
             'offset' => 0,
             'orderby' => 'created_at',
@@ -200,6 +201,14 @@ class WP_Logify {
         if ($args['date_to']) {
             $where[] = 'created_at <= %s';
             $where_values[] = sanitize_text_field($args['date_to']);
+        }
+
+        if ($args['search']) {
+            $search = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
+            $where[] = '(action LIKE %s OR object_type LIKE %s OR meta LIKE %s)';
+            $where_values[] = $search;
+            $where_values[] = $search;
+            $where_values[] = $search;
         }
 
         $where_clause = implode(' AND ', $where);
@@ -266,6 +275,14 @@ class WP_Logify {
         if (!empty($args['date_to'])) {
             $where[] = 'created_at <= %s';
             $where_values[] = sanitize_text_field($args['date_to']);
+        }
+
+        if (!empty($args['search'])) {
+            $search = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
+            $where[] = '(action LIKE %s OR object_type LIKE %s OR meta LIKE %s)';
+            $where_values[] = $search;
+            $where_values[] = $search;
+            $where_values[] = $search;
         }
 
         $where_clause = implode(' AND ', $where);

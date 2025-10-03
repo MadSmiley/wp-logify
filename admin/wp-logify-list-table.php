@@ -297,6 +297,7 @@ class WP_Logify_List_Table extends WP_List_Table {
 
         $filter_action = isset($_GET['filter_action']) ? sanitize_text_field($_GET['filter_action']) : null;
         $filter_user = isset($_GET['filter_user']) ? absint($_GET['filter_user']) : null;
+        $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : null;
 
         // Build query args
         $args = [
@@ -314,11 +315,24 @@ class WP_Logify_List_Table extends WP_List_Table {
             $args['user_id'] = $filter_user;
         }
 
+        if ($search) {
+            $args['search'] = $search;
+        }
+
         // Get items
         $this->items = WP_Logify::get_logs($args);
 
+        // Build count args
+        $count_args = [];
+        if ($filter_action) {
+            $count_args['action'] = $filter_action;
+        }
+        if ($search) {
+            $count_args['search'] = $search;
+        }
+
         // Get total items for pagination
-        $total_items = WP_Logify::count_logs($filter_action ? ['action' => $filter_action] : []);
+        $total_items = WP_Logify::count_logs($count_args);
 
         // Set pagination
         $this->set_pagination_args([
