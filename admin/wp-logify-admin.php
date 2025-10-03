@@ -67,6 +67,12 @@ class WP_Logify_Admin {
             WP_LOGIFY_VERSION,
             true
         );
+
+        // Localize script for translations
+        wp_localize_script('wp-logify-admin', 'wpLogifyL10n', [
+            'all' => __('All', 'wp-logify'),
+            'selected' => __('selected', 'wp-logify')
+        ]);
     }
 
     /**

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Logify\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 14:58+0000\n"
+"POT-Creation-Date: 2025-10-03 15:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -37,8 +37,8 @@ msgstr ""
 msgid "Action:"
 msgstr ""
 
-#: admin/wp-logify-list-table.php:269 admin/wp-logify-list-table.php:293
-#: admin/wp-logify-list-table.php:317
+#: admin/wp-logify-admin.php:73 admin/wp-logify-list-table.php:269
+#: admin/wp-logify-list-table.php:293 admin/wp-logify-list-table.php:317
 msgid "All"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgid "Guest"
 msgstr ""
 
 #. URI of the plugin
-msgid "https://github.com/yourusername/wp-logify"
+msgid "https://github.com/MadSmiley/wp-logify"
 msgstr ""
 
 #. Author URI of the plugin
@@ -106,12 +106,16 @@ msgstr ""
 msgid "Object Type:"
 msgstr ""
 
-#: admin/wp-logify-admin.php:93
+#: admin/wp-logify-admin.php:99
 msgid "Search Logs"
 msgstr ""
 
-#: admin/wp-logify-admin.php:118
+#: admin/wp-logify-admin.php:124
 msgid "Security check failed."
+msgstr ""
+
+#: admin/wp-logify-admin.php:74
+msgid "selected"
 msgstr ""
 
 #: admin/wp-logify-list-table.php:45 admin/wp-logify-list-table.php:311
@@ -131,10 +135,10 @@ msgstr ""
 msgid "WP Logify"
 msgstr ""
 
-#: admin/wp-logify-admin.php:77
+#: admin/wp-logify-admin.php:83
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: admin/wp-logify-admin.php:113
+#: admin/wp-logify-admin.php:119
 msgid "You do not have sufficient permissions to perform this action."
 msgstr ""

@@ -94,11 +94,15 @@
             var count = $checkboxes.length;
             var label = $button.data('label') || '';
 
+            // Get translations from localized script
+            var allText = (typeof wpLogifyL10n !== 'undefined') ? wpLogifyL10n.all : 'All';
+            var selectedText = (typeof wpLogifyL10n !== 'undefined') ? wpLogifyL10n.selected : 'selected';
+
             if (count > 0) {
-                var text = count + ' selected';
+                var text = count + ' ' + selectedText;
                 $button.html('<strong>' + label + ':</strong> ' + text + ' <span class="dashicons dashicons-arrow-down-alt2"></span>');
             } else {
-                $button.html('<strong>' + label + ':</strong> All <span class="dashicons dashicons-arrow-down-alt2"></span>');
+                $button.html('<strong>' + label + ':</strong> ' + allText + ' <span class="dashicons dashicons-arrow-down-alt2"></span>');
             }
         });
 
