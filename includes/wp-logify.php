@@ -342,7 +342,7 @@ class WP_Logify {
 
         // Log the cleanup action
         if ($result !== false && $result > 0) {
-            self::log('logs_cleaned_up', null, [
+            self::log('logs_cleaned_up', null, null, [
                 'deleted_count' => $result,
                 'older_than_days' => $days
             ]);
