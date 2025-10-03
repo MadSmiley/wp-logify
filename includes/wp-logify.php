@@ -73,7 +73,7 @@ class WP_Logify {
             user_id bigint(20) UNSIGNED DEFAULT NULL,
             action varchar(255) NOT NULL,
             object_type varchar(100) DEFAULT NULL,
-            object_id bigint(20) UNSIGNED DEFAULT NULL,
+            object_id varchar(255) DEFAULT NULL,
             meta longtext DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
@@ -95,7 +95,7 @@ class WP_Logify {
      *
      * @param string $action The action being logged
      * @param string|null $object_type Optional object type (post, user, order, etc.)
-     * @param int|null $object_id Optional object ID
+     * @param string|int|null $object_id Optional object ID (can be int or string UID)
      * @param array $meta Optional metadata
      * @return int|false Log entry ID on success, false on failure
      */
@@ -110,13 +110,13 @@ class WP_Logify {
             'user_id' => $user_id ?: null,
             'action' => sanitize_text_field($action),
             'object_type' => $object_type ? sanitize_text_field($object_type) : null,
-            'object_id' => $object_id ? absint($object_id) : null,
+            'object_id' => $object_id ? sanitize_text_field($object_id) : null,
             'meta' => !empty($meta) ? wp_json_encode($meta) : null,
             'created_at' => current_time('mysql')
         ];
 
         // Format data types
-        $format = ['%d', '%s', '%s', '%d', '%s', '%s'];
+        $format = ['%d', '%s', '%s', '%s', '%s', '%s'];
 
         // Allow filtering before inserting
         $data = apply_filters('wp_logify_before_log', $data, $action, $object_type, $object_id, $meta);
@@ -189,8 +189,8 @@ class WP_Logify {
         }
 
         if ($args['object_id']) {
-            $where[] = 'object_id = %d';
-            $where_values[] = absint($args['object_id']);
+            $where[] = 'object_id = %s';
+            $where_values[] = sanitize_text_field($args['object_id']);
         }
 
         if ($args['date_from']) {
@@ -206,6 +206,7 @@ class WP_Logify {
         if ($args['search']) {
             $search = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
             $where[] = '(action LIKE %s OR object_type LIKE %s OR meta LIKE %s)';
+            $where_values[] = $search;
             $where_values[] = $search;
             $where_values[] = $search;
             $where_values[] = $search;
@@ -263,8 +264,8 @@ class WP_Logify {
         }
 
         if (!empty($args['object_id'])) {
-            $where[] = 'object_id = %d';
-            $where_values[] = absint($args['object_id']);
+            $where[] = 'object_id = %s';
+            $where_values[] = sanitize_text_field($args['object_id']);
         }
 
         if (!empty($args['date_from'])) {

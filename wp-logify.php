@@ -129,7 +129,7 @@ final class WP_Logify_Bootstrap {
  *
  * @param string $action The action being logged
  * @param string|null $object_type Optional object type (post, user, order, etc.)
- * @param int|null $object_id Optional object ID related to the action
+ * @param string|int|null $object_id Optional object ID (can be int or string UID)
  * @param array $meta Optional metadata array
  * @return int|false Log entry ID on success, false on failure
  */

@@ -152,8 +152,8 @@ class WP_Logify_List_Table extends WP_List_Table {
         }
 
         return sprintf(
-            '<code>%d</code>',
-            $item->object_id
+            '<code>%s</code>',
+            esc_html($item->object_id)
         );
     }
 

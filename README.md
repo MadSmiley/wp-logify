@@ -77,13 +77,13 @@ The `user_id` is automatically captured from the current logged-in user:
 ### Core Function
 
 ```php
-wp_logify_log( string $action, string|null $object_type = null, int|null $object_id = null, array $meta = [] )
+wp_logify_log( string $action, string|null $object_type = null, string|int|null $object_id = null, array $meta = [] )
 ```
 
 **Parameters:**
 - `$action` (string, required) - The action being logged
 - `$object_type` (string, optional) - Type of object (post, user, order, form, etc.)
-- `$object_id` (int, optional) - Related object ID
+- `$object_id` (string|int, optional) - Related object ID (can be numeric ID or string UID)
 - `$meta` (array, optional) - Associative array of additional data
 
 **Returns:** `int|false` - Log entry ID on success, false on failure
@@ -182,7 +182,7 @@ Table: `{prefix}_wp_logify`
 | `user_id`     | bigint(20) UNSIGNED | WordPress user ID (NULL for guests)   |
 | `action`      | varchar(255)        | Action identifier                     |
 | `object_type` | varchar(100)        | Object type (NULL if not used)        |
-| `object_id`   | bigint(20) UNSIGNED | Related object ID (NULL if not used)  |
+| `object_id`   | varchar(255)        | Related object ID (NULL if not used)  |
 | `meta`        | longtext            | JSON-encoded metadata                 |
 | `created_at`  | datetime            | Timestamp of log entry                |
 
