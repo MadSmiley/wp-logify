@@ -91,7 +91,6 @@ class WP_Logify_Admin {
                 <input type="hidden" name="page" value="wp-logify">
                 <?php
                 $list_table->search_box(__('Search Logs', 'wp-logify'), 'wp-logify-search');
-                $list_table->views();
                 $list_table->display();
                 ?>
             </form>

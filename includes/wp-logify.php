@@ -174,18 +174,42 @@ class WP_Logify {
 
         // Build WHERE clause
         if ($args['user_id']) {
-            $where[] = 'user_id = %d';
-            $where_values[] = absint($args['user_id']);
+            if (is_array($args['user_id'])) {
+                $placeholders = implode(',', array_fill(0, count($args['user_id']), '%d'));
+                $where[] = "user_id IN ({$placeholders})";
+                foreach ($args['user_id'] as $uid) {
+                    $where_values[] = absint($uid);
+                }
+            } else {
+                $where[] = 'user_id = %d';
+                $where_values[] = absint($args['user_id']);
+            }
         }
 
         if ($args['action']) {
-            $where[] = 'action = %s';
-            $where_values[] = sanitize_text_field($args['action']);
+            if (is_array($args['action'])) {
+                $placeholders = implode(',', array_fill(0, count($args['action']), '%s'));
+                $where[] = "action IN ({$placeholders})";
+                foreach ($args['action'] as $act) {
+                    $where_values[] = sanitize_text_field($act);
+                }
+            } else {
+                $where[] = 'action = %s';
+                $where_values[] = sanitize_text_field($args['action']);
+            }
         }
 
         if ($args['object_type']) {
-            $where[] = 'object_type = %s';
-            $where_values[] = sanitize_text_field($args['object_type']);
+            if (is_array($args['object_type'])) {
+                $placeholders = implode(',', array_fill(0, count($args['object_type']), '%s'));
+                $where[] = "object_type IN ({$placeholders})";
+                foreach ($args['object_type'] as $otype) {
+                    $where_values[] = sanitize_text_field($otype);
+                }
+            } else {
+                $where[] = 'object_type = %s';
+                $where_values[] = sanitize_text_field($args['object_type']);
+            }
         }
 
         if ($args['object_id']) {
@@ -250,18 +274,42 @@ class WP_Logify {
 
         // Build WHERE clause (same logic as get_logs)
         if (!empty($args['user_id'])) {
-            $where[] = 'user_id = %d';
-            $where_values[] = absint($args['user_id']);
+            if (is_array($args['user_id'])) {
+                $placeholders = implode(',', array_fill(0, count($args['user_id']), '%d'));
+                $where[] = "user_id IN ({$placeholders})";
+                foreach ($args['user_id'] as $uid) {
+                    $where_values[] = absint($uid);
+                }
+            } else {
+                $where[] = 'user_id = %d';
+                $where_values[] = absint($args['user_id']);
+            }
         }
 
         if (!empty($args['action'])) {
-            $where[] = 'action = %s';
-            $where_values[] = sanitize_text_field($args['action']);
+            if (is_array($args['action'])) {
+                $placeholders = implode(',', array_fill(0, count($args['action']), '%s'));
+                $where[] = "action IN ({$placeholders})";
+                foreach ($args['action'] as $act) {
+                    $where_values[] = sanitize_text_field($act);
+                }
+            } else {
+                $where[] = 'action = %s';
+                $where_values[] = sanitize_text_field($args['action']);
+            }
         }
 
         if (!empty($args['object_type'])) {
-            $where[] = 'object_type = %s';
-            $where_values[] = sanitize_text_field($args['object_type']);
+            if (is_array($args['object_type'])) {
+                $placeholders = implode(',', array_fill(0, count($args['object_type']), '%s'));
+                $where[] = "object_type IN ({$placeholders})";
+                foreach ($args['object_type'] as $otype) {
+                    $where_values[] = sanitize_text_field($otype);
+                }
+            } else {
+                $where[] = 'object_type = %s';
+                $where_values[] = sanitize_text_field($args['object_type']);
+            }
         }
 
         if (!empty($args['object_id'])) {
@@ -389,7 +437,24 @@ class WP_Logify {
         $table_name = self::get_table_name();
 
         $results = $wpdb->get_col(
-            "SELECT DISTINCT action FROM {$table_name} ORDER BY action ASC"
+            "SELECT DISTINCT action FROM {$table_name} WHERE action IS NOT NULL ORDER BY action ASC"
+        );
+
+        return $results ?: [];
+    }
+
+    /**
+     * Get distinct object types from logs
+     *
+     * @return array Array of object type names
+     */
+    public static function get_distinct_object_types() {
+        global $wpdb;
+
+        $table_name = self::get_table_name();
+
+        $results = $wpdb->get_col(
+            "SELECT DISTINCT object_type FROM {$table_name} WHERE object_type IS NOT NULL ORDER BY object_type ASC"
         );
 
         return $results ?: [];

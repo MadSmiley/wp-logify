@@ -98,3 +98,92 @@
 .wp-list-table .column-created_at {
     width: 15%;
 }
+
+/* Filter styles */
+.wp-logify-filters {
+    margin-bottom: 10px;
+}
+
+.wp-logify-filter-group {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: top;
+}
+
+.wp-logify-filter-group > label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* Dropdown styles */
+.wp-logify-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.wp-logify-dropdown-toggle {
+    min-width: 150px;
+    text-align: left;
+    padding-right: 30px !important;
+    position: relative;
+}
+
+.wp-logify-dropdown-toggle strong {
+    margin-right: 3px;
+}
+
+.wp-logify-dropdown-toggle .dashicons {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wp-logify-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    z-index: 1000;
+    margin-top: 2px;
+}
+
+.wp-logify-dropdown-content.show {
+    display: block;
+}
+
+.wp-logify-dropdown-content label {
+    display: block;
+    padding: 8px 12px;
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+    transition: background-color 0.2s;
+}
+
+.wp-logify-dropdown-content label:hover {
+    background-color: #f0f0f1;
+}
+
+.wp-logify-dropdown-content label input[type="checkbox"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.wp-logify-filter-buttons {
+    display: inline-block;
+}
+
+.wp-logify-filter-buttons .button {
+    margin-right: 5px;
+}

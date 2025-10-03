@@ -234,45 +234,114 @@ class WP_Logify_List_Table extends WP_List_Table {
     }
 
     /**
-     * Get filter views
+     * Display extra tablenav (filters)
      *
-     * @return array
+     * @param string $which Position (top or bottom)
      */
-    public function get_views() {
-        $current_action = isset($_GET['filter_action']) ? sanitize_text_field($_GET['filter_action']) : '';
-
-        $views = [];
-
-        // All logs
-        $class = empty($current_action) ? 'current' : '';
-        $all_url = remove_query_arg(['filter_action', 'paged']);
-        $total_logs = WP_Logify::count_logs();
-        $views['all'] = sprintf(
-            '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>',
-            esc_url($all_url),
-            $class,
-            __('All', 'wp-logify'),
-            $total_logs
-        );
-
-        // Get distinct actions
-        $actions = WP_Logify::get_distinct_actions();
-
-        foreach ($actions as $action) {
-            $class = $current_action === $action ? 'current' : '';
-            $action_url = add_query_arg(['filter_action' => $action, 'paged' => false]);
-            $action_count = WP_Logify::count_logs(['action' => $action]);
-
-            $views[$action] = sprintf(
-                '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>',
-                esc_url($action_url),
-                $class,
-                esc_html($action),
-                $action_count
-            );
+    public function extra_tablenav($which) {
+        if ($which !== 'top') {
+            return;
         }
 
-        return $views;
+        $selected_actions = isset($_GET['filter_action']) && is_array($_GET['filter_action']) ? array_map('sanitize_text_field', $_GET['filter_action']) : [];
+        $selected_users = isset($_GET['filter_user']) && is_array($_GET['filter_user']) ? array_map('absint', $_GET['filter_user']) : [];
+        $selected_object_types = isset($_GET['filter_object_type']) && is_array($_GET['filter_object_type']) ? array_map('sanitize_text_field', $_GET['filter_object_type']) : [];
+
+        $all_actions = WP_Logify::get_distinct_actions();
+        $all_object_types = WP_Logify::get_distinct_object_types();
+
+        // Get users who have created logs
+        global $wpdb;
+        $table_name = WP_Logify::get_table_name();
+        $user_ids = $wpdb->get_col("SELECT DISTINCT user_id FROM {$table_name} WHERE user_id IS NOT NULL ORDER BY user_id ASC");
+
+        ?>
+        <div class="alignleft actions wp-logify-filters">
+            <!-- Action Filter -->
+            <div class="wp-logify-filter-group">
+                <div class="wp-logify-dropdown">
+                    <button type="button" class="button wp-logify-dropdown-toggle" id="filter-action-toggle" data-label="<?php esc_attr_e('Action', 'wp-logify'); ?>">
+                        <strong><?php _e('Action:', 'wp-logify'); ?></strong>
+                        <?php
+                        if (!empty($selected_actions)) {
+                            echo esc_html(sprintf(_n('%d selected', '%d selected', count($selected_actions), 'wp-logify'), count($selected_actions)));
+                        } else {
+                            _e('All', 'wp-logify');
+                        }
+                        ?> <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    </button>
+                    <div class="wp-logify-dropdown-content" id="filter-action-content">
+                        <?php foreach ($all_actions as $action): ?>
+                            <label>
+                                <input type="checkbox" name="filter_action[]" value="<?php echo esc_attr($action); ?>" <?php echo in_array($action, $selected_actions) ? 'checked' : ''; ?>>
+                                <?php echo esc_html($action); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Object Type Filter -->
+            <div class="wp-logify-filter-group">
+                <div class="wp-logify-dropdown">
+                    <button type="button" class="button wp-logify-dropdown-toggle" id="filter-object-type-toggle" data-label="<?php esc_attr_e('Object Type', 'wp-logify'); ?>">
+                        <strong><?php _e('Object Type:', 'wp-logify'); ?></strong>
+                        <?php
+                        if (!empty($selected_object_types)) {
+                            echo esc_html(sprintf(_n('%d selected', '%d selected', count($selected_object_types), 'wp-logify'), count($selected_object_types)));
+                        } else {
+                            _e('All', 'wp-logify');
+                        }
+                        ?> <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    </button>
+                    <div class="wp-logify-dropdown-content" id="filter-object-type-content">
+                        <?php foreach ($all_object_types as $otype): ?>
+                            <label>
+                                <input type="checkbox" name="filter_object_type[]" value="<?php echo esc_attr($otype); ?>" <?php echo in_array($otype, $selected_object_types) ? 'checked' : ''; ?>>
+                                <?php echo esc_html($otype); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Filter -->
+            <div class="wp-logify-filter-group">
+                <div class="wp-logify-dropdown">
+                    <button type="button" class="button wp-logify-dropdown-toggle" id="filter-user-toggle" data-label="<?php esc_attr_e('User', 'wp-logify'); ?>">
+                        <strong><?php _e('User:', 'wp-logify'); ?></strong>
+                        <?php
+                        if (!empty($selected_users)) {
+                            echo esc_html(sprintf(_n('%d selected', '%d selected', count($selected_users), 'wp-logify'), count($selected_users)));
+                        } else {
+                            _e('All', 'wp-logify');
+                        }
+                        ?> <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    </button>
+                    <div class="wp-logify-dropdown-content" id="filter-user-content">
+                        <?php foreach ($user_ids as $user_id):
+                            $user = get_userdata($user_id);
+                            if ($user):
+                        ?>
+                            <label>
+                                <input type="checkbox" name="filter_user[]" value="<?php echo esc_attr($user_id); ?>" <?php echo in_array($user_id, $selected_users) ? 'checked' : ''; ?>>
+                                <?php echo esc_html($user->display_name . ' (' . $user_id . ')'); ?>
+                            </label>
+                        <?php endif; endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wp-logify-filter-group wp-logify-filter-buttons">
+                <?php submit_button(__('Filter', 'wp-logify'), 'secondary', 'filter_submit', false); ?>
+                <?php if (!empty($selected_actions) || !empty($selected_users) || !empty($selected_object_types)): ?>
+                    <a href="<?php echo esc_url(remove_query_arg(['filter_action', 'filter_user', 'filter_object_type', 'paged'])); ?>" class="button">
+                        <?php _e('Clear', 'wp-logify'); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
     }
 
     /**
@@ -295,8 +364,10 @@ class WP_Logify_List_Table extends WP_List_Table {
         $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'created_at';
         $order = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : 'DESC';
 
-        $filter_action = isset($_GET['filter_action']) ? sanitize_text_field($_GET['filter_action']) : null;
-        $filter_user = isset($_GET['filter_user']) ? absint($_GET['filter_user']) : null;
+        // Get filter parameters (support arrays)
+        $filter_actions = isset($_GET['filter_action']) && is_array($_GET['filter_action']) ? array_map('sanitize_text_field', $_GET['filter_action']) : null;
+        $filter_users = isset($_GET['filter_user']) && is_array($_GET['filter_user']) ? array_map('absint', $_GET['filter_user']) : null;
+        $filter_object_types = isset($_GET['filter_object_type']) && is_array($_GET['filter_object_type']) ? array_map('sanitize_text_field', $_GET['filter_object_type']) : null;
         $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : null;
 
         // Build query args
@@ -307,12 +378,16 @@ class WP_Logify_List_Table extends WP_List_Table {
             'order' => $order
         ];
 
-        if ($filter_action) {
-            $args['action'] = $filter_action;
+        if ($filter_actions && !empty($filter_actions)) {
+            $args['action'] = $filter_actions;
         }
 
-        if ($filter_user) {
-            $args['user_id'] = $filter_user;
+        if ($filter_users && !empty($filter_users)) {
+            $args['user_id'] = $filter_users;
+        }
+
+        if ($filter_object_types && !empty($filter_object_types)) {
+            $args['object_type'] = $filter_object_types;
         }
 
         if ($search) {
@@ -324,8 +399,14 @@ class WP_Logify_List_Table extends WP_List_Table {
 
         // Build count args
         $count_args = [];
-        if ($filter_action) {
-            $count_args['action'] = $filter_action;
+        if ($filter_actions && !empty($filter_actions)) {
+            $count_args['action'] = $filter_actions;
+        }
+        if ($filter_users && !empty($filter_users)) {
+            $count_args['user_id'] = $filter_users;
+        }
+        if ($filter_object_types && !empty($filter_object_types)) {
+            $count_args['object_type'] = $filter_object_types;
         }
         if ($search) {
             $count_args['search'] = $search;
