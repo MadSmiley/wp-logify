@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Logify
- * Plugin URI: https://github.com/yourusername/wp-logify
+ * Plugin URI: https://github.com/MadSmiley/wp-logify
  * Description: A comprehensive logging system for WordPress that tracks user actions, events, and custom activities.
  * Version: 1.0.0
  * Author: MadSmiley
