@@ -183,7 +183,7 @@ Table: `{prefix}_wp_logify`
 | `meta`      | longtext            | JSON-encoded metadata                 |
 | `created_at`| datetime            | Timestamp of log entry                |
 
-**Indexes:** `user_id`, `action`, `object_id`, `created_at`
+**Indexes:** `user_id`, `action`, `created_at`
 
 ## Common Use Cases
 

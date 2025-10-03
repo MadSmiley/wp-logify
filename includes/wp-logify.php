@@ -78,7 +78,6 @@ class WP_Logify {
             PRIMARY KEY  (id),
             KEY user_id (user_id),
             KEY action (action),
-            KEY object_id (object_id),
             KEY created_at (created_at)
         ) {$charset_collate};";
 
