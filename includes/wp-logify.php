@@ -204,11 +204,12 @@ class WP_Logify {
         }
 
         if ($args['search']) {
-            $search = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
-            $where[] = '(action LIKE %s OR object_type LIKE %s OR meta LIKE %s)';
+            $search_term = sanitize_text_field($args['search']);
+            $search = '%' . $wpdb->esc_like($search_term) . '%';
+            $where[] = '(action LIKE %s OR object_type LIKE %s OR object_id = %s OR meta LIKE %s)';
             $where_values[] = $search;
             $where_values[] = $search;
-            $where_values[] = $search;
+            $where_values[] = $search_term; // Exact match for object_id
             $where_values[] = $search;
         }
 
@@ -279,10 +280,12 @@ class WP_Logify {
         }
 
         if (!empty($args['search'])) {
-            $search = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
-            $where[] = '(action LIKE %s OR object_type LIKE %s OR meta LIKE %s)';
+            $search_term = sanitize_text_field($args['search']);
+            $search = '%' . $wpdb->esc_like($search_term) . '%';
+            $where[] = '(action LIKE %s OR object_type LIKE %s OR object_id = %s OR meta LIKE %s)';
             $where_values[] = $search;
             $where_values[] = $search;
+            $where_values[] = $search_term; // Exact match for object_id
             $where_values[] = $search;
         }
 
