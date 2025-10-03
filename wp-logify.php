@@ -63,10 +63,10 @@ final class WP_Logify_Bootstrap {
      * Load required dependencies
      */
     private function load_dependencies() {
-        require_once WP_LOGIFY_PLUGIN_DIR . 'includes/class-wp-logify.php';
+        require_once WP_LOGIFY_PLUGIN_DIR . 'includes/wp-logify.php';
 
         if (is_admin()) {
-            require_once WP_LOGIFY_PLUGIN_DIR . 'admin/class-wp-logify-admin.php';
+            require_once WP_LOGIFY_PLUGIN_DIR . 'admin/wp-logify-admin.php';
         }
     }
 
