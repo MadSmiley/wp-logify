@@ -75,7 +75,7 @@ class WP_Logify {
             object_id bigint(20) UNSIGNED DEFAULT NULL,
             meta longtext DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
+            PRIMARY KEY  (id),
             KEY user_id (user_id),
             KEY action (action),
             KEY object_id (object_id),
