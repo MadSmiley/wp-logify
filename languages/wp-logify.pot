@@ -1,0 +1,140 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Logify\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-03 14:58+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8.3; php-8.1.0\n"
+"X-Domain: wp-logify"
+
+#: admin/wp-logify-list-table.php:267 admin/wp-logify-list-table.php:291
+#: admin/wp-logify-list-table.php:315
+msgid "%d selected"
+msgid_plural "%d selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#. Description of the plugin
+msgid ""
+"A comprehensive logging system for WordPress that tracks user actions, "
+"events, and custom activities."
+msgstr ""
+
+#: admin/wp-logify-list-table.php:46 admin/wp-logify-list-table.php:263
+msgid "Action"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:264
+msgid "Action:"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:269 admin/wp-logify-list-table.php:293
+#: admin/wp-logify-list-table.php:317
+msgid "All"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:339
+msgid "Clear"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:50
+msgid "Date"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:76
+msgid "Delete"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:107
+msgid "Deleted User"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:336
+msgid "Filter"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:101
+msgid "Guest"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/yourusername/wp-logify"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.linkedin.com/in/germain-belacel/"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:174
+msgid "Invalid JSON"
+msgstr ""
+
+#. Author of the plugin
+msgid "MadSmiley"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:49
+msgid "Meta"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:202
+msgid "Meta Data"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:437
+msgid "No logs found."
+msgstr ""
+
+#: admin/wp-logify-list-table.php:48
+msgid "Object ID"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:47 admin/wp-logify-list-table.php:287
+msgid "Object Type"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:288
+msgid "Object Type:"
+msgstr ""
+
+#: admin/wp-logify-admin.php:93
+msgid "Search Logs"
+msgstr ""
+
+#: admin/wp-logify-admin.php:118
+msgid "Security check failed."
+msgstr ""
+
+#: admin/wp-logify-list-table.php:45 admin/wp-logify-list-table.php:311
+msgid "User"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:312
+msgid "User:"
+msgstr ""
+
+#: admin/wp-logify-list-table.php:200
+msgid "View"
+msgstr ""
+
+#. Name of the plugin
+#: admin/wp-logify-admin.php:37 admin/wp-logify-admin.php:38
+msgid "WP Logify"
+msgstr ""
+
+#: admin/wp-logify-admin.php:77
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: admin/wp-logify-admin.php:113
+msgid "You do not have sufficient permissions to perform this action."
+msgstr ""
