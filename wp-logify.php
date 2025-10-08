@@ -78,6 +78,7 @@ final class WP_Logify_Bootstrap {
         register_deactivation_hook(__FILE__, [$this, 'deactivate']);
 
         add_action('plugins_loaded', [$this, 'init']);
+        add_action('upgrader_process_complete', [$this, 'on_plugin_upgrade'], 10, 2);
     }
 
     /**
@@ -105,6 +106,57 @@ final class WP_Logify_Bootstrap {
             'plugin' => 'WP Logify',
             'version' => WP_LOGIFY_VERSION
         ]);
+    }
+
+    /**
+     * Plugin upgrade callback
+     *
+     * @param WP_Upgrader $upgrader_object WP_Upgrader instance
+     * @param array $options Array of bulk item update data
+     */
+    public function on_plugin_upgrade($upgrader_object, $options) {
+        // Check if this is a plugin update
+        if ($options['action'] !== 'update' || $options['type'] !== 'plugin') {
+            return;
+        }
+
+        // Check if our plugin was updated
+        if (!isset($options['plugins']) || !is_array($options['plugins'])) {
+            return;
+        }
+
+        foreach ($options['plugins'] as $plugin) {
+            if ($plugin === WP_LOGIFY_PLUGIN_BASENAME) {
+                $this->upgrade();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Handle plugin upgrade tasks
+     */
+    private function upgrade() {
+        // Get stored version
+        $stored_version = get_option('wp_logify_db_version', '0.0.0');
+
+        // If versions match, no upgrade needed
+        if (version_compare($stored_version, WP_LOGIFY_VERSION, '>=')) {
+            return;
+        }
+
+        // Run table creation/update (dbDelta will handle schema changes)
+        WP_Logify::create_table();
+
+        // Log the upgrade
+        wp_logify_log('plugin_upgraded', 'plugin', null, [
+            'plugin' => 'WP Logify',
+            'from_version' => $stored_version,
+            'to_version' => WP_LOGIFY_VERSION
+        ]);
+
+        // Update stored version
+        update_option('wp_logify_db_version', WP_LOGIFY_VERSION);
     }
 
     /**
