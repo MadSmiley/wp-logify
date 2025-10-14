@@ -174,34 +174,92 @@ class WP_Logify_List_Table extends WP_List_Table {
             return '<em>' . __('Invalid JSON', 'wp-logify') . '</em>';
         }
 
-        // Create a preview (first 50 chars)
-        $meta_string = wp_json_encode($meta, JSON_UNESCAPED_UNICODE);
-        $preview = mb_substr($meta_string, 0, 50);
+        // Create a readable HTML preview
+        $preview_html = $this->format_meta_preview($meta);
 
-        if (mb_strlen($meta_string) > 50) {
-            $preview .= '...';
-        }
-
-        // Create expandable meta viewer
-        $full_meta = esc_html($meta_string);
+        // Create formatted JSON for modal
+        $formatted_json = wp_json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $full_meta = esc_html($formatted_json);
         $modal_id = 'meta-modal-' . $item->id;
 
         return sprintf(
-            '<span class="wp-logify-meta-preview">%s</span> <button type="button" class="button button-small wp-logify-view-meta" data-target="%s">%s</button>
+            '<div class="wp-logify-meta-preview">%s</div> <button type="button" class="button button-small wp-logify-view-meta" data-target="%s">%s</button>
             <div id="%s" class="wp-logify-meta-modal" style="display:none;">
                 <div class="wp-logify-meta-content">
                     <span class="wp-logify-meta-close">&times;</span>
                     <h3>%s</h3>
-                    <pre>%s</pre>
+                    <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto;">%s</pre>
                 </div>
             </div>',
-            esc_html($preview),
+            $preview_html,
             esc_attr($modal_id),
-            __('View', 'wp-logify'),
+            __('View JSON', 'wp-logify'),
             esc_attr($modal_id),
             __('Meta Data', 'wp-logify'),
             $full_meta
         );
+    }
+
+    /**
+     * Format meta data for preview
+     *
+     * @param array $meta Meta data
+     * @return string Formatted HTML
+     */
+    private function format_meta_preview($meta) {
+        if (empty($meta)) {
+            return '—';
+        }
+
+        $items = [];
+        $count = 0;
+        $max_items = 3; // Limite d'affichage dans la preview
+
+        foreach ($meta as $key => $value) {
+            if ($count >= $max_items) {
+                $remaining = count($meta) - $max_items;
+                $items[] = sprintf('<em>+%d %s</em>', $remaining, _n('other', 'others', $remaining, 'wp-logify'));
+                break;
+            }
+
+            $formatted_value = $this->format_meta_value($value);
+            $items[] = sprintf('<strong>%s:</strong> %s', esc_html($key), $formatted_value);
+            $count++;
+        }
+
+        return implode('<br>', $items);
+    }
+
+    /**
+     * Format a single meta value
+     *
+     * @param mixed $value Value to format
+     * @return string Formatted value
+     */
+    private function format_meta_value($value) {
+        if (is_array($value) || is_object($value)) {
+            $json = wp_json_encode($value, JSON_UNESCAPED_UNICODE);
+            $preview = mb_substr($json, 0, 40);
+            if (mb_strlen($json) > 40) {
+                $preview .= '...';
+            }
+            return '<code>' . esc_html($preview) . '</code>';
+        }
+
+        if (is_bool($value)) {
+            return $value ? '<em>true</em>' : '<em>false</em>';
+        }
+
+        if (is_null($value)) {
+            return '<em>null</em>';
+        }
+
+        $str_value = (string) $value;
+        if (mb_strlen($str_value) > 50) {
+            $str_value = mb_substr($str_value, 0, 50) . '...';
+        }
+
+        return esc_html($str_value);
     }
 
     /**

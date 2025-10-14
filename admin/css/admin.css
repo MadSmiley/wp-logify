@@ -7,9 +7,26 @@
 
 /* Meta preview styles */
 .wp-logify-meta-preview {
-    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.wp-logify-meta-preview strong {
+    color: #0073aa;
+    font-weight: 600;
+}
+
+.wp-logify-meta-preview code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
     font-size: 12px;
+}
+
+.wp-logify-meta-preview em {
     color: #666;
+    font-style: normal;
 }
 
 .wp-logify-view-meta {
